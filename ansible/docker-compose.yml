@@ -1,0 +1,41 @@
+version: '3.5'
+services:
+  ara:
+    image: local/ara2:v1.0
+    container_name: ara
+    hostname: ara
+    ports:
+      - 8080:8080
+    depends_on:
+      - ara-db
+    environment:
+      ARA_DATABASE: "postgresql+psycopg2://ara:ara@ara-db:5432/ara"
+      WAIT_HOSTS: ara-db:5432
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    links:
+      - ara-db
+
+  ara-db:
+    image: postgres:11
+    container_name: ara-db
+    hostname: ara-db
+    shm_size: 256mb
+    ports:
+      - 5432:5432
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+#  mysql:
+#  #    image: mariadb
+#  #    ports:
+#  #      - 3306:3306
+#  #    environment:
+#  #      MYSQL_DATABASE: aradb
+#  #      MYSQL_USER: arauser
+#  #      MYSQL_PASSWORD: arapass
+#  #      MYSQL_ROOT_PASSWORD:
+#  #    volumes:
+#  #      - ara_data:/var/lib/mysql
+#  #volumes:
+#  #  ara_data:
